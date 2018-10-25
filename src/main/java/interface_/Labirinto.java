@@ -7,14 +7,14 @@ import baseDeConhecimento.Tabuleiro;
 import motorDeInferencia.Service;
 
 public class Labirinto {
-	private static String chessboard[][];
+	private static String chessboard[][]; // Cria um vetor de vetor chamado chessboard
 	private static Integer x1;
 	private static Integer y1;
-	private static Integer size;
-	private final static Integer SEE_SIZE = 3;
-	private static Integer finalPosition;
+	private static Integer size; // Declara o tamanho do tabuleiro como variável global
+	private final static Integer SEE_SIZE = 3; // Define o tamanho do range de visão do boneco
+	private static Integer finalPosition; // Instancia a posição onde o labirinto terminará
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, InterruptedException {
 		Scanner scanner = new Scanner(System.in);
 		Service service = new Service();
 
@@ -25,27 +25,29 @@ public class Labirinto {
 		chessboard = tabuleiro.getChessboard();
 		for (int i = 0; i < chessboard.length; i++) {
 			for (int j = 0; j < chessboard[i].length; j++) {
-				chessboard[i][j] = " ";
+				chessboard[i][j] = "  ";
 			}
 		}
+		
 		int p = 0;
 		for (int i = 0; i < chessboard.length; i++) {
 			System.out.println();
 			for (int j = 0; j < chessboard[i].length; j++) {
-				System.out.print("|" + chessboard[i][j]);
+
+				System.out.print("│" + chessboard[i][j]);
+
 			}
-			System.out.print(p + "|");
+			System.out.print(String.format("%02d", p) + "│");
 			p++;
-			System.out.println();
 		}
 
-		// Ler o input do professor
+		// Ler o input do usuário
 		System.out.println();
 		System.out.println("Digite a posição que deseja finalizar o labirinto:");
 		finalPosition = scanner.nextInt();
 
 		// Gerar o tabuleiro
-		chessboard[0][0] = "X";
+		chessboard[0][0] = "╳ ";
 		x1 = 0;
 		y1 = 0;
 		tabuleiro.setObstaculos(5);
@@ -57,9 +59,9 @@ public class Labirinto {
 					|| chessboard[theNumberX][theNumberY].equals("B"))) {
 				obst = obst - 1;
 			} else {
-				chessboard[theNumberX][theNumberY] = "B";
-				chessboard[theNumberX + 1][theNumberY + 1] = "B";
-				chessboard[theNumberX + 1][theNumberY] = "B";
+				chessboard[theNumberX][theNumberY] = "■ ";
+				chessboard[theNumberX + 1][theNumberY + 1] = "■ ";
+				chessboard[theNumberX + 1][theNumberY] = "■ ";
 			}
 		}
 
@@ -67,15 +69,14 @@ public class Labirinto {
 		for (int i = 0; i < chessboard.length; i++) {
 			System.out.println();
 			for (int j = 0; j < chessboard[i].length; j++) {
-
-				System.out.print("|" + chessboard[i][j]);
+				System.out.print("│" + chessboard[i][j]);
 			}
 			if (i == finalPosition) {
-				System.out.print("D|");
-				System.out.println();
+				System.out.print("D│");
+				
 			} else {
-				System.out.print("|");
-				System.out.println();
+				System.out.print("│");
+				
 			}
 		}
 
@@ -87,6 +88,7 @@ public class Labirinto {
 
 		while (y1 != 39 && x1 != finalPosition) {
 			see();
+			Thread.sleep(300);
 		}
 		System.out.println();
 
@@ -98,10 +100,10 @@ public class Labirinto {
 		if (y1 < 40) {
 			for (int i = 1; i < SEE_SIZE; i++) {
 				try {
-				if (chessboard[x1][y1 + i] == "B") {
-					blocked = true;
-				}
-				}catch (ArrayIndexOutOfBoundsException e) {
+					if (chessboard[x1][y1 + i] == "B") {
+						blocked = true;
+					}
+				} catch (ArrayIndexOutOfBoundsException e) {
 					blocked = true;
 					break;
 				}
@@ -115,7 +117,7 @@ public class Labirinto {
 		} else if (blocked) {
 			blocked = false;
 			for (int i = 1; i < SEE_SIZE; i++) {
-				if (chessboard[x1 + i][y1] == "B") {
+				if (chessboard[x1 + i][y1] == "B ") {
 					blocked = true;
 				}
 			}
@@ -127,36 +129,24 @@ public class Labirinto {
 	}
 
 	public static void walk(Integer x, Integer y) throws IOException {
-		chessboard[x][y] = "X";
+		chessboard[x][y] = "╳ ";
 
 		for (int i = 0; i < chessboard.length; i++) {
 			System.out.println();
 
 			for (int j = 0; j < chessboard[i].length; j++) {
 
-				System.out.print("|" + chessboard[i][j]);
+				System.out.print("│" + chessboard[i][j]);
 			}
 			if (i == finalPosition) {
-				System.out.print("D|");
-				System.out.println();
+				System.out.print("D│");
+				
 			} else {
-				System.out.print("|");
-				System.out.println();
+				System.out.print("│");
+				
 			}
 		}
 	}
-
-//	private static void bestWay(Integer x, Integer y) throws IOException {
-//		double result = 0.0;
-//
-//		result = result(x + 1, y + 1, result);
-//		result = result(x + 1, y + 0, result);
-//		result = result(x + 0, y + 1, result);
-//		result = result(x + 1, y - 1, result);
-//		result = result(x - 1, y + 1, result);
-//
-//		walk(x1, y1);
-//	}
 
 	private static double result(Integer x, Integer y, double result) {
 		int h = 0;
