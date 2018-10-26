@@ -1,6 +1,7 @@
 package interface_;
 
 import java.io.IOException;
+import java.util.Random;
 import java.util.Scanner;
 
 import baseDeConhecimento.Tabuleiro;
@@ -50,7 +51,7 @@ public class Labirinto {
 		chessboard[0][0] = "╳ ";
 		x1 = 0;
 		y1 = 0;
-		tabuleiro.setObstaculos(5);
+		tabuleiro.setObstaculos(50);
 		for (int obst = 0; obst < tabuleiro.getObstaculos(); obst++) {
 			int theNumberX = service.randomize();
 			int theNumberY = service.randomize();
@@ -72,7 +73,7 @@ public class Labirinto {
 				System.out.print("│" + chessboard[i][j]);
 			}
 			if (i == finalPosition) {
-				System.out.print("D│");
+				System.out.print("D");
 				
 			} else {
 				System.out.print("│");
@@ -96,11 +97,12 @@ public class Labirinto {
 	}
 
 	public static void see() throws IOException {
+		chessboard[x1][y1] = "  ";
 		boolean blocked = false;
 		if (y1 < 40) {
 			for (int i = 1; i < SEE_SIZE; i++) {
 				try {
-					if (chessboard[x1][y1 + i] == "B") {
+					if (chessboard[x1][y1 + i] == "■ ") {
 						blocked = true;
 					}
 				} catch (ArrayIndexOutOfBoundsException e) {
@@ -117,12 +119,22 @@ public class Labirinto {
 		} else if (blocked) {
 			blocked = false;
 			for (int i = 1; i < SEE_SIZE; i++) {
-				if (chessboard[x1 + i][y1] == "B ") {
+				if (chessboard[x1 + i][y1] == "■ ") {
 					blocked = true;
 				}
 			}
 			if (!blocked) {
-				x1++;
+				Random ran = new Random();
+				int r = ran.nextInt(2);
+				System.out.println(r);
+				switch (r) {
+					case 0:
+						x1++;
+						break;
+					case 1:
+						y1--;
+						break;
+				}
 				walk(x1, y1);
 			}
 		}
@@ -130,7 +142,7 @@ public class Labirinto {
 
 	public static void walk(Integer x, Integer y) throws IOException {
 		chessboard[x][y] = "╳ ";
-
+		System.out.println();
 		for (int i = 0; i < chessboard.length; i++) {
 			System.out.println();
 
@@ -139,7 +151,7 @@ public class Labirinto {
 				System.out.print("│" + chessboard[i][j]);
 			}
 			if (i == finalPosition) {
-				System.out.print("D│");
+				System.out.print("D");
 				
 			} else {
 				System.out.print("│");
@@ -154,7 +166,7 @@ public class Labirinto {
 		if (x < 0 || y < 0) {
 			return result;
 		}
-		if (chessboard[x][y].equals("B")) {
+		if (chessboard[x][y].equals("■ ")) {
 			return result;
 		}
 

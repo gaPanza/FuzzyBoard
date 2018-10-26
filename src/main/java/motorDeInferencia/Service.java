@@ -15,7 +15,7 @@ public class Service {
 	
 	public Integer randomize() {
 		Random ran = new Random();
-		int x = ran.nextInt(15);
+		int x = ran.nextInt(39);
 		return x;
 		
 	}
