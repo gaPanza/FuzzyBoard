@@ -12,7 +12,7 @@ public class Labirinto {
 	private static Integer x1;
 	private static Integer y1;
 	private static Integer size; // Declara o tamanho do tabuleiro como variável global
-	private final static Integer SEE_SIZE = 3; // Define o tamanho do range de visão do boneco
+	private final static Integer SEE_SIZE = 4; // Define o tamanho do range de visão do boneco
 	private static Integer finalPosition; // Instancia a posição onde o labirinto terminará
 
 	public static void main(String[] args) throws IOException, InterruptedException {
@@ -29,7 +29,7 @@ public class Labirinto {
 				chessboard[i][j] = "  ";
 			}
 		}
-		
+
 		int p = 0;
 		for (int i = 0; i < chessboard.length; i++) {
 			System.out.println();
@@ -74,18 +74,13 @@ public class Labirinto {
 			}
 			if (i == finalPosition) {
 				System.out.print("D");
-				
+
 			} else {
 				System.out.print("│");
-				
+
 			}
 		}
 
-		// Andar para direita sempre, quando possivel, analisar 3 campos na frente para
-		// ver se há bloqueio. Quando não for possível andar para a direita
-		// calcular uma rota aleatória.
-
-		// Ver
 
 		while (y1 != 39 && x1 != finalPosition) {
 			see();
@@ -99,6 +94,7 @@ public class Labirinto {
 	public static void see() throws IOException {
 		chessboard[x1][y1] = "  ";
 		boolean blocked = false;
+		// Verifica se para direita está blockeado
 		if (y1 < 40) {
 			for (int i = 1; i < SEE_SIZE; i++) {
 				try {
@@ -116,31 +112,84 @@ public class Labirinto {
 		if (!blocked) {
 			y1++;
 			walk(x1, y1);
-		} else if (blocked) {
+		}
+
+		else if (blocked) {
 			blocked = false;
-			for (int i = 1; i < SEE_SIZE; i++) {
-				if (chessboard[x1 + i][y1] == "■ ") {
-					blocked = true;
+			Random ran = new Random();
+			int r = ran.nextInt(3);
+			switch (r) {
+			case 0: // Andar para baixo
+				if (y1 < 40) {
+					for (int i = 1; i < SEE_SIZE; i++) {
+						try {
+							if (chessboard[x1 + i][y1] == "■ ") {
+								blocked = true;
+							}
+						} catch (ArrayIndexOutOfBoundsException e) {
+							blocked = true;
+							break;
+						}
+					}
+					if (blocked) {
+						see();
+						break;
+					}
+					x1++;
+				} else {
+					see();
+				}
+				break;
+			case 1: // Andar para esquerda
+				if (y1 > 0) {
+					for (int i = 1; i < SEE_SIZE; i++) {
+						try {
+							if (chessboard[x1][y1 - i] == "■ ") {
+								blocked = true;
+							}
+						} catch (ArrayIndexOutOfBoundsException e) {
+							blocked = true;
+							see();
+							break;
+						}
+					}
+					if (blocked) {
+						see();
+						break;
+					}
+					y1--;
+				} else {
+					see();
+				}
+				break;
+			case 2: // Andar para cima
+				if (y1 < 40 && x1 > 0) {
+					for (int i = 1; i < SEE_SIZE; i++) {
+						try {
+							if (chessboard[x1 - i][y1] == "■ ") {
+								blocked = true;
+							}
+						} catch (ArrayIndexOutOfBoundsException e) {
+							blocked = true;
+							break;
+						}
+					}
+					if (blocked) {
+						see();
+						break;
+					}
+					x1--;
+				} else {
+					see();
 				}
 			}
-			if (!blocked) {
-				Random ran = new Random();
-				int r = ran.nextInt(2);
-				System.out.println(r);
-				switch (r) {
-					case 0:
-						x1++;
-						break;
-					case 1:
-						y1--;
-						break;
-				}
-				walk(x1, y1);
-			}
+			walk(x1, y1);
 		}
 	}
 
 	public static void walk(Integer x, Integer y) throws IOException {
+		System.out.println(x1);
+		System.out.println(y1);
 		chessboard[x][y] = "╳ ";
 		System.out.println();
 		for (int i = 0; i < chessboard.length; i++) {
@@ -152,42 +201,12 @@ public class Labirinto {
 			}
 			if (i == finalPosition) {
 				System.out.print("D");
-				
+
 			} else {
 				System.out.print("│");
-				
+
 			}
 		}
-	}
-
-	private static double result(Integer x, Integer y, double result) {
-		int h = 0;
-
-		if (x < 0 || y < 0) {
-			return result;
-		}
-		if (chessboard[x][y].equals("■ ")) {
-			return result;
-		}
-
-		if (x < y) {
-			h = (size - y) + (y - x);
-		}
-		if (y < x) {
-			h = (size - x) + (x - y);
-		}
-		if (x == y) {
-			h = (size - x) + (y - x);
-		}
-		Double compare = (Double) (14.0 - h) / 14.0;
-
-		if (compare >= result) {
-			x1 = x;
-			y1 = y;
-		}
-
-		return result > compare ? result : compare;
-
 	}
 
 }
