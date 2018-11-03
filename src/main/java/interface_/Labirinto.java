@@ -1,6 +1,8 @@
 package interface_;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -14,8 +16,20 @@ public class Labirinto {
 	private static Integer size; // Declara o tamanho do tabuleiro como variável global
 	private final static Integer SEE_SIZE = 4; // Define o tamanho do range de visão do boneco
 	private static Integer finalPosition; // Instancia a posição onde o labirinto terminará
+	private static int right = 85;
+	private static int left = 75;
+	private static int up = 75;
+	private static int down = 75;
 
 	public static void main(String[] args) throws IOException, InterruptedException {
+		// Definição de Variáveis
+
+		// Definição de Gráficos Nebulosos
+
+		// Fuzzyficação
+
+		// Defuzzyficação
+
 		Scanner scanner = new Scanner(System.in);
 		Service service = new Service();
 
@@ -81,7 +95,6 @@ public class Labirinto {
 			}
 		}
 
-
 		while (y1 != 39 && x1 != finalPosition) {
 			see();
 			Thread.sleep(300);
@@ -92,99 +105,129 @@ public class Labirinto {
 	}
 
 	public static void see() throws IOException {
+		int nextRight = right;
+		int nextLeft = left;
+		int nextUp = up;
+		int nextDown = down;
+		
+		//Reset if it's too low
+		
+		if (right < 20) {
+			right = 50;
+		} if (left < 20) {
+			left = 50;
+		} if (up < 20) {
+			up = 50;
+		} if (down < 20) {
+			down = 50;
+		}
 		chessboard[x1][y1] = "  ";
-		boolean blocked = false;
-		// Verifica se para direita está blockeado
+
+		// Direita
 		if (y1 < 40) {
 			for (int i = 1; i < SEE_SIZE; i++) {
 				try {
 					if (chessboard[x1][y1 + i] == "■ ") {
-						blocked = true;
+						nextRight = 20;
+						right -= 5;
+						break;
 					}
 				} catch (ArrayIndexOutOfBoundsException e) {
-					blocked = true;
+					nextRight = 20;
+					right -= 5;
 					break;
 				}
 			}
 		} else {
-			blocked = true;
-		}
-		if (!blocked) {
-			y1++;
-			walk(x1, y1);
-		}
-
-		else if (blocked) {
-			blocked = false;
-			Random ran = new Random();
-			int r = ran.nextInt(3);
-			switch (r) {
-			case 0: // Andar para baixo
-				if (y1 < 40) {
-					for (int i = 1; i < SEE_SIZE; i++) {
-						try {
-							if (chessboard[x1 + i][y1] == "■ ") {
-								blocked = true;
-							}
-						} catch (ArrayIndexOutOfBoundsException e) {
-							blocked = true;
-							break;
-						}
-					}
-					if (blocked) {
-						see();
+			nextRight = 20;
+			right -= 5;
+		} // Baixo
+		if (y1 < 40) {
+			for (int i = 1; i < SEE_SIZE; i++) {
+				try {
+					if (chessboard[x1 + i][y1] == "■ ") {
+						nextDown = 20;
+						down -= 5;
 						break;
 					}
-					x1++;
-				} else {
-					see();
-				}
-				break;
-			case 1: // Andar para esquerda
-				if (y1 > 0) {
-					for (int i = 1; i < SEE_SIZE; i++) {
-						try {
-							if (chessboard[x1][y1 - i] == "■ ") {
-								blocked = true;
-							}
-						} catch (ArrayIndexOutOfBoundsException e) {
-							blocked = true;
-							see();
-							break;
-						}
-					}
-					if (blocked) {
-						see();
-						break;
-					}
-					y1--;
-				} else {
-					see();
-				}
-				break;
-			case 2: // Andar para cima
-				if (y1 < 40 && x1 > 0) {
-					for (int i = 1; i < SEE_SIZE; i++) {
-						try {
-							if (chessboard[x1 - i][y1] == "■ ") {
-								blocked = true;
-							}
-						} catch (ArrayIndexOutOfBoundsException e) {
-							blocked = true;
-							break;
-						}
-					}
-					if (blocked) {
-						see();
-						break;
-					}
-					x1--;
-				} else {
-					see();
+				} catch (ArrayIndexOutOfBoundsException e) {
+					nextDown = 20;
+					down -= 5;
+					break;
 				}
 			}
-			walk(x1, y1);
+		} else {
+			nextDown = 20;
+			down -= 5;
+		} // Esquerda
+		if (y1 > 0) {
+			for (int i = 1; i < SEE_SIZE; i++) {
+				try {
+					if (chessboard[x1][y1 - i] == "■ ") {
+						nextLeft = 20;
+						left -= 5;
+						break;
+					}
+				} catch (ArrayIndexOutOfBoundsException e) {
+					nextLeft = 20;
+					break;
+				}
+			}
+		} else {
+			nextLeft = 20;
+			left -= 5;
+		} // Cima
+		if (y1 < 40 && x1 > 0) {
+			for (int i = 1; i < SEE_SIZE; i++) {
+				try {
+					if (chessboard[x1 - i][y1] == "■ ") {
+						nextUp = 20;
+						up -= 5;
+						break;
+					}
+				} catch (ArrayIndexOutOfBoundsException e) {
+					nextUp = 20;
+					break;
+				}
+			}
+		} else {
+			nextUp = 20;
+			up -= 5;
 		}
+		int[] array = new int[] {nextRight, nextLeft, nextUp, nextDown};
+		Arrays.sort(array);
+		ArrayList <String> selection = new ArrayList<String>();
+		
+		if (nextRight == array[3]) {
+			selection.add("right");
+		} if (nextLeft == array[3]) {
+			selection.add("left");
+		} if (nextUp == array[3]) {
+			selection.add("up");
+		} if (nextDown == array[3]) {
+			selection.add("down");
+		}
+		int arraySelection = 0;
+		if (selection.size() > 1) {
+			Random ran = new Random();
+			arraySelection = ran.nextInt(selection.size());
+		}
+		switch (selection.get(arraySelection)) {
+			case "right":
+				y1++;
+				break;
+			case "left":
+				y1--;
+				break;
+			case "up":
+				x1--;
+				break;
+			case "down":
+				x1++;
+				break;
+		}
+		System.out.println("Right" + nextRight + "Left" + nextLeft + "Up" + nextUp + "Down" + nextDown);
+		walk(x1,y1);
 	}
 
 	public static void walk(Integer x, Integer y) throws IOException {
