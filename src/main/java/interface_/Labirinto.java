@@ -17,7 +17,7 @@ public class Labirinto {
 	private final static Integer SEE_SIZE = 4; // Define o tamanho do range de visão do boneco
 	private static Integer finalPosition; // Instancia a posição onde o labirinto terminará
 	private static int right = 85;
-	private static int left = 75;
+	private static int left = 55;
 	private static int up = 75;
 	private static int down = 75;
 
@@ -99,7 +99,7 @@ public class Labirinto {
 			see();
 			Thread.sleep(300);
 		}
-		System.out.println();
+		System.out.println(x1 + " y1" + y1);
 
 		scanner.close();
 	}
@@ -109,63 +109,45 @@ public class Labirinto {
 		int nextLeft = left;
 		int nextUp = up;
 		int nextDown = down;
-		
-		//Reset if it's too low
-		
-		if (right < 20) {
-			right = 50;
-		} if (left < 20) {
-			left = 50;
-		} if (up < 20) {
-			up = 50;
-		} if (down < 20) {
-			down = 50;
-		}
-		chessboard[x1][y1] = "  ";
+
+		chessboard[x1][y1] = "-1";
 
 		// Direita
 		if (y1 < 40) {
 			for (int i = 1; i < SEE_SIZE; i++) {
 				try {
-					if (chessboard[x1][y1 + i] == "■ ") {
+					if (chessboard[x1][y1 + i] == "■ " || chessboard[x1][y1 + 1] == "-1") {
 						nextRight = 20;
-						right -= 5;
 						break;
 					}
 				} catch (ArrayIndexOutOfBoundsException e) {
 					nextRight = 20;
-					right -= 5;
 					break;
 				}
 			}
 		} else {
 			nextRight = 20;
-			right -= 5;
 		} // Baixo
 		if (y1 < 40) {
 			for (int i = 1; i < SEE_SIZE; i++) {
 				try {
-					if (chessboard[x1 + i][y1] == "■ ") {
+					if (chessboard[x1 + i][y1] == "■ " || chessboard[x1 + 1][y1] == "-1") {
 						nextDown = 20;
-						down -= 5;
 						break;
 					}
 				} catch (ArrayIndexOutOfBoundsException e) {
 					nextDown = 20;
-					down -= 5;
 					break;
 				}
 			}
 		} else {
 			nextDown = 20;
-			down -= 5;
 		} // Esquerda
 		if (y1 > 0) {
 			for (int i = 1; i < SEE_SIZE; i++) {
 				try {
-					if (chessboard[x1][y1 - i] == "■ ") {
+					if (chessboard[x1][y1 - i] == "■ " || chessboard[x1][y1 - 1] == "-1") {
 						nextLeft = 20;
-						left -= 5;
 						break;
 					}
 				} catch (ArrayIndexOutOfBoundsException e) {
@@ -175,14 +157,12 @@ public class Labirinto {
 			}
 		} else {
 			nextLeft = 20;
-			left -= 5;
 		} // Cima
 		if (y1 < 40 && x1 > 0) {
 			for (int i = 1; i < SEE_SIZE; i++) {
 				try {
-					if (chessboard[x1 - i][y1] == "■ ") {
+					if (chessboard[x1 - i][y1] == "■ " || chessboard[x1 - i][y1] == "-1") {
 						nextUp = 20;
-						up -= 5;
 						break;
 					}
 				} catch (ArrayIndexOutOfBoundsException e) {
@@ -192,19 +172,21 @@ public class Labirinto {
 			}
 		} else {
 			nextUp = 20;
-			up -= 5;
 		}
-		int[] array = new int[] {nextRight, nextLeft, nextUp, nextDown};
+		int[] array = new int[] { nextRight, nextLeft, nextUp, nextDown };
 		Arrays.sort(array);
-		ArrayList <String> selection = new ArrayList<String>();
-		
+		ArrayList<String> selection = new ArrayList<String>();
+
 		if (nextRight == array[3]) {
 			selection.add("right");
-		} if (nextLeft == array[3]) {
+		}
+		if (nextLeft == array[3]) {
 			selection.add("left");
-		} if (nextUp == array[3]) {
+		}
+		if (nextUp == array[3]) {
 			selection.add("up");
-		} if (nextDown == array[3]) {
+		}
+		if (nextDown == array[3]) {
 			selection.add("down");
 		}
 		int arraySelection = 0;
@@ -213,21 +195,21 @@ public class Labirinto {
 			arraySelection = ran.nextInt(selection.size());
 		}
 		switch (selection.get(arraySelection)) {
-			case "right":
-				y1++;
-				break;
-			case "left":
-				y1--;
-				break;
-			case "up":
-				x1--;
-				break;
-			case "down":
-				x1++;
-				break;
+		case "right":
+			y1++;
+			break;
+		case "left":
+			y1--;
+			break;
+		case "up":
+			x1--;
+			break;
+		case "down":
+			x1++;
+			break;
 		}
-		System.out.println("Right" + nextRight + "Left" + nextLeft + "Up" + nextUp + "Down" + nextDown);
-		walk(x1,y1);
+		System.out.println("Right " + nextRight + "Left " + nextLeft + "Up " + nextUp + "Down " + nextDown);
+		walk(x1, y1);
 	}
 
 	public static void walk(Integer x, Integer y) throws IOException {
